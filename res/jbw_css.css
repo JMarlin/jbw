@@ -1,0 +1,130 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto+Condensed);
+
+body {
+    color: black;
+    background-color: white;
+	margin: 0px;
+	padding: 0px;
+}
+
+.banner {
+	background-color: #000000;
+}
+
+.jbw_menuentry {
+	float: left;
+	position: relative;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 10px;
+	padding-right: 10px;
+  z-index: 2147483647;
+}
+
+.jbw_menuentry:active {
+	color: #FFFFFF;
+}
+
+.jbw_menuentry:hover {
+	color: #1572A2;
+	/*background-color: #FFFFFF;*/
+	background-image: url("../images/menu_bg_rev.png");
+}
+
+.jbw_menuentry_active {
+	float: left;
+	position: relative;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	padding-left: 10px;
+	padding-right: 10px;
+  color: #1572A2;
+	background-color: #FFFFFF;
+  background-image: url("../images/menu_bg_active.png");
+	border-style: solid;
+	border-width: 1px;
+	border-color: #1572A2;
+	border-bottom: none;
+	padding-top: 2px;
+	padding-bottom: 3px;
+	padding-left: 9px;
+	padding-right: 9px;
+  z-index: 2147483647;
+}
+
+.jbw_menubar  {
+	color: #FFFFFF;
+	background-color: #FF0000;
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+	overflow: auto;
+	background-image: url("../images/menu_bg.png");
+	font-family: 'Roboto Condensed', sans-serif;
+  z-index: 2147483645;
+}
+
+.jbw_menubar a{
+	color: #FFFFFF;
+	border-width: 1px;
+	border-color: #FF0000;
+	border-bottom: none;
+  text-decoration: none;
+}
+
+.jbw_menubar a:active {
+	color: #FFFFFF;
+}
+
+.jbw_menubar a:visited {
+	color: #FFFFFF;
+}
+
+.jbw_menubar a:hover {
+	/*color: #FF0000;
+	background-color: #FFFFFF;*/
+}
+
+.jbw_menu {
+	color: #000000;
+	background-color: #FFFFFF;
+	float: left;
+	position: absolute;
+	font-family: 'Roboto Condensed', sans-serif;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #1572A2;
+	border-top: none;
+  box-shadow: 0px 0px 48px -18px rgba(0,0,0,1);
+  z-index: 2147483640;
+}
+
+.jbw_menu a {
+	text-decoration: none;
+}
+
+.jbw_menuitem {
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	color: #000000;
+	text-decoration: none;
+	font-size: 14px;
+}
+
+.jbw_menuitem:hover {
+	color: #FFFFFF;
+	background-color: #5596B7;
+	text-decoration: none;
+}
+
+.jbw_workpane {
+	height: 100%;
+	width: 100%;
+	background-color: #CCCCCC;
+	background-image: url("../images/workpane.png");
+  background-position: right bottom;
+	padding: 0;
+	margin: 0;
+}

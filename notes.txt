@@ -1,0 +1,10 @@
+Okay, so to do this, we need a structure.
+This will be MVC. Our databases are the Model. node.js will provide a view to the user and also process incoming requests as a controller.
+We will mimic, as much as possible, the org of current jobbook. Therefore we will need to define the following:
+
+-a data object and classes inheriting from it to provide abstracted access to rows from the DB (model object)
+-a biz object and the classes inheriting THAT to provide abstraction between the page views and their effect on the data object (controller object)
+-a set of pages/templates that implement a view via the bizobj, replacing the forms from VFP (view object)
+	NOTE: These should also really have a nice, clean way of binding their fields to the fields in their bizobj's data and a way to import a top-level template for the menu/header
+	
+Thought: Implement the view forms as a child of a main form object, which provides basic view rendering functionality and also an interface for describing their inputs and their positions on the form
