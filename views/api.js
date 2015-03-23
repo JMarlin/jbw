@@ -16,15 +16,17 @@
 //stored and then unthawed the next time the user logs on meaning that a user wouldn't have to reopen
 //their entire session if they walk away and everything times out.
 
-var sessionLib = require('../jbw/session.js'),
-		sessionManager = new sessionLib.Session();
+var sessionLib     = require('../jbw/session.js'),
+		jbw_loginForm  = require('../jbw/widgets/forms/jbw_loginForm.js'),
+		jbw_mainMenu   = require('../jbw/widgets/jbw_mainMenu.js'),
+		sessionManager = new sessionLib.Session(),
+    jbw_doAction   = {
+	                       "start_session" : {
+												     "routine" : jbw_startSession,
+						                  "secure"  : false
+												 }
+										 };
 
-var jbw_doAction = {
-	"start_session" : { "routine" : jbw_startSession,
-						          "secure"  : false }
-};
-
-var globCount = 0;
 
 Function.prototype.partial = function() {
 
@@ -40,10 +42,9 @@ Function.prototype.partial = function() {
 
 function Queue() {
 
-		that = this;
+		var that = this;
 
 		this.commands = [];
-		this.qid = ++globCount;
 
 		this.push = function(val) {
 
@@ -62,19 +63,28 @@ function Queue() {
 }
 
 
-function jbw_startSession(requestObj, retArray, callback) {
+function jbw_startSession(requestObj, retArray, returnToQueue) {
 
-    var x = new Queue();
+    var q = new Queue();
 
-	  retArray.push({
-	        mode: "builder",
-	        content: new jbw_loginForm(),
-			    parent: 0
-	  });
+	  q.push((function(f){
 
-		x.push((function(cb) {
+					jbw_loginForm.spawn(null, function(form){
 
-				jbw_makeMainMenu(null, function(menu){
+							retArray.push({
+										mode: "builder",
+										content: form,
+										parent: 0
+							});
+
+							console.log('complete adding login dialog');
+							f();
+				  });
+		}).partial());
+
+		q.push((function(f) {
+
+				jbw_mainMenu.spawn(null, function(menu){
 
 				    retArray.push({
 						    mode: "builder",
@@ -83,150 +93,20 @@ function jbw_startSession(requestObj, retArray, callback) {
 						});
 
 						console.log('complete adding menu');
-						cb();
+						f();
 				});
 		}).partial());
 
-		x.push(function() {
+		q.push(function() {
 				console.log('returning to message handling loop');
-				console.log(callback);
-		    callback();
-				console.log('we should never get here');
-				while(1);
+		    returnToQueue();
 		});
 
-		x.execute();
+		q.execute();
 }
 
 function jbw_openHandle(widgetObj, session) {
 
-}
-
-//We need to be able to issue a session handle prior to session authentication
-//To this end, a session object will contain an 'authenticated' field. This way,
-//we can hand a login session a handle with which it can hand back the login
-//credentials without allowing any other access
-
-function jbw_widget(name, session) {
-	this.type = "widget";
-	this.name = name;
-	this.children = [];
-
-	//TO BE IMPLEMENTED! WE'RE GOING WAAAAY OFF THE RAILS, HERE
-	//this.handle = jbw_sessionManager[session].openHandle(this); //Get a new handle and register the widget with the session manager
-												 //Handles are unique within the whole system, and therefore the session
-
-	this.destroy = function(){
-		jbw_sessionManager[session].closeHandle(this.handle);
-		//remove the entity entry from the session list
-	}
-
-}
-
-
-function jbw_menuBar(name, session) {
-
-	  var base = new jbw_widget(name, session);
-	  base.type = "menuBar";
-		return base;
-}
-
-
-function jbw_menuHeading(name, title, session) {
-
-    var base = new jbw_widget(name, session);
-		base.type = "menuHeading";
-		base.title = title;
-		return base;
-}
-
-
-function jbw_menuEntry(name, title, action, session) {
-
-		var base = new jbw_widget(name, session);
-		base.type = "menuHeading";
-		base.title = title;
-		base.action = action;
-		return base;
-}
-
-
-function jbw_makeMainMenu(session, callback) {
-
-	  var retMenu = new jbw_menuBar('mainMenu', session);
-		//gotta do the async thing somehow
-		callback(retMenu);
-}
-
-
-function jbw_rectWidget(name, height, width, top, left, bottom, right, session) {
-
-	var base = new jbw_widget(name, session); // 'inheritance'
-	base.type = "rectWidget";
-	base.height = height;
-	base.width = width;
-	base.top = top;
-	base.left = left;
-	base.bottom = bottom;
-	base.right = right;
-	return base;
-}
-
-function jbw_panel(name, height, width, top, left, bottom, right, resizable, session) {
-	var base = new jbw_rectWidget(name, height, width, top, left, bottom, right, session);
-	base.type = "panel";
-	base.resizable = resizable;
-	return base;
-}
-
-function jbw_form(session) {
-	var base = new jbw_widget("form");
-	base.type = "form";
-	return base;
-}
-
-//TOMORROW: It would be nice to add a 'tip' value to this
-//class to allow the displayed widget to show a greyed
-//out message to the user when it's empty
-function jbw_textbox(name, height, width, top, left, bottom, right, content, session) {
-	var base = new jbw_rectWidget();
-	this.type = "textbox";
-	this.children = [];
-}
-
-function jbw_button(title, action, top, left, bottom, right, session) {
-	this.top = top;
-	this.left = left;
-	this.bottom = bottom;
-	this.right = right;
-	this.type = "button";
-	this.title = title;
-	this.action = action;
-	this.children = [];
-}
-
-
-function jbw_loginForm(session) {
-
-		var retFrm = new jbw_panel("Login", 0, 0, 300, 200),
-				tempForm = new jbw_form(),
-				tbUserName = new jbw_textbox(),
-				tbPassword = new jbw_textbox();
-
-		tempForm.children.push(tbUserName);
-		tempForm.children.push(tbPassword);
-
-		//TOMORROW: This doesn't work yet, but 'actions' should really be 'messages',
-		//they should have a command message, an associated payload (handles to
-		//the widgets from which the data should be extracted -- NOTE: This should be
-		//an array of widget handles which the client will, when sending the message,
-		//replace with that widget's current value; the server command should know which
-		//values each place in the array represents) and perhaps a target (eg:
-		//authServer for login authentication, generally allow for routing messages
-		//to specific backend modules)
-		tempForm.children.push(new jbw_button("Login", {command: "login", payload: [tbUserName.handle, tbPassword.handle]}, null, null, 0, 0));
-		retFrm.children.push(tempForm);
-		return retFrm;
 }
 
 
