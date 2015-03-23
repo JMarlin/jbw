@@ -1,25 +1,15 @@
-//var querystring = require('querystring');
-var jbw_security = require('../jbw/jbw_security');	//security object for user authentication
-var jbw_page = require('../jbw/jbw_page');			//page object, wraps child object in page header and footer
-var jbw_client = require('../jbw/jbw_client');
-var jbw_menu = require('../jbw/widgets/jbw_menu');
+var jbw_sessions = require('../jbw/session.js'),
+    jbw_client   = require('../jbw/jbw_client');
 
-function display(res, args, postData) {
 
-	jbw_page.wrap(res, function(endDraw) {	//Stick an HTTP header on our core data
+exports.display = function(res, args, postData) {
 
-	    jbw_menu.display(res, function() {
-
-					if(jbw_security.checkCredentials(res)) {
-
-							jbw_client.insertCSS(res);
-			        jbw_client.insertScripts(res);
-			        res.write('<div class="jbw_workpane"></div>');
-	        }
-
-					endDraw();
-	    });
-	});
-}
-
-exports.display = display;
+    res.writeHead(200, {'Content-Type': 'text/html'});
+	  res.write('<html>\n\t<head>\n\t\t<title>JobBook</title>\n\t</head>\n\t<body onload="jbw_start();">\n');
+		res.write("\t\t<div class='banner'>\n\t\t\t<img src='res/images/banner.png' />\n\t\t</div>\n");
+		jbw_client.insertCSS(res);
+		jbw_client.insertScripts(res);
+		res.write('\t\t<div class="jbw_workpane"></div>\n');
+		res.write('\t</body>\n</html>');
+		res.end();
+};

@@ -128,7 +128,7 @@ function jbw_requestError(retArray, callback) {
 }
 
 
-function display(res, args, postData) {
+exports.display = function(res, args, postData) {
 
 	var tempObj;
 	var returnObjs = [];
@@ -161,8 +161,6 @@ function display(res, args, postData) {
 		}
 	}
 
-  //returnObjs = returnObjs.concat(tempObj);
-
 	q.push(function() {
 
 		res.writeHead(200, {'Content-Type': 'text/json'});
@@ -173,6 +171,4 @@ function display(res, args, postData) {
 
 	q.execute();
 
-}
-
-exports.display = display;
+};

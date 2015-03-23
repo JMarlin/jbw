@@ -3,6 +3,9 @@ var $jbw_gVersion = "v1.00.34";
 var jbw_widgetize = { //The objTable is an associative array of all object types to their constructors
 	"panel" : jbw_panel,
 	"form" : jbw_form,
+	"menuBar" : jbw_menuBar,
+	"menuHeading" : jbw_menuHeading,
+	"menuEntry" : jbw_menuEntry,
 	/*"tabpage" : jbw_tabpage,*/
 	/*"label" : jbw_label,*/
 	"textbox" : jbw_textbox,
@@ -38,9 +41,15 @@ function jbw_makeRequest(msgObj) {
 }
 
 function jbw_start() {
-	rootObject.element = $(".jbw_workpane");
+
+	WebFont.load({
+    google: {
+      families: ['Roboto Condensed']
+    }
+  });
+
+	rootObject.tail = $(".jbw_workpane");
 	objHandles[0] = rootObject;
-	jbw_installMenu(); //This needs to be replaced by a menu widget constructor
 	jbw_resizeWorkpane();
 	$(window).resize(jbw_resizeWorkpane);
 
@@ -66,10 +75,10 @@ function jbw_endSession() {
 
 function getObject(handle) {
 
-    if(objHandles[handle])
-		    return objHandles[handle];
-		else
-				return objHandles[0];
+    //if(objHandles[handle])
+		//    return objHandles[handle];
+		//else
+				return null;
 }
 
 function jbw_processMsgs(msgObject) {
@@ -83,6 +92,8 @@ function jbw_processMsgs(msgObject) {
 			}
 	} catch(e) {}
 
+	//Make sure any new widgets are seran wrapped
+	jbw_resizeWorkpane();
 }
 
 function jbw_widget(JSONObject, parentObj) {
@@ -90,11 +101,14 @@ function jbw_widget(JSONObject, parentObj) {
 	var theCallback = {};
 
 	//Draw/extend the widget
-	JSONObject.parent = parentObj;
+	if(parentObj)
+	    JSONObject.parent = parentObj;
+
 	theCallback = jbw_widgetize[JSONObject.type](JSONObject);
 
 	//Set up the parent/child relation
-	$(parentObj.element).append(JSONObject.element);
+	if(parentObj)
+	    $(parentObj.tail).append(JSONObject.head);
 
 	//Install the handle so that we can reference
 	//this widget from future messages
@@ -112,64 +126,142 @@ function jbw_widget(JSONObject, parentObj) {
 
 }
 
-function jbw_panel(baseObject, afterAttach) {
+function jbw_panel(baseObject) {
 
-	baseObject.element = $(document.createElement("div"));
+		baseObject.parent = rootObject;
+		baseObject.head = $(document.createElement("div"));
+		baseObject.head.attr("title", baseObject.title);
+		baseObject.head.css("width", baseObject.width);
+		baseObject.head.css("height", baseObject.height);
+		baseObject.head.css("x", baseObject.x);
+		baseObject.head.css("y", baseObject.y);
+		baseObject.tail = baseObject.head;
 
-	//baseObject.element.css("border-style", "inset");
-	//baseObject.element.css("border-width", "2px");
-	//baseObject.element.css("margin-top", "3px");
-	baseObject.element.attr("title", baseObject.title);
-	baseObject.element.css("width", baseObject.width);
-	baseObject.element.css("height", baseObject.height);
-	baseObject.element.css("x", baseObject.x);
-	baseObject.element.css("y", baseObject.y);
-
-	return function() {
-		baseObject.element.dialog({
-			minHeight : baseObject.height,
-			minWidth : baseObject.width,
-			resizable : !!baseObject.resizable
-		}).parent().draggable({
-			containment: baseObject.parent.element
-		});
-	}
-
+		return function() {
+				baseObject.head.dialog({
+						minHeight : baseObject.height,
+						minWidth : baseObject.width,
+						resizable : !!baseObject.resizable
+				}).parent().draggable({
+						containment: baseObject.parent.tail
+				});
+		};
 }
 
 function jbw_form(baseObject) {
 
-	baseObject.element = $(document.createElement("form"));
+	  baseObject.head = $(document.createElement("form"));
+	  baseObject.tail = baseObject.head;
 
-	return null;
-
+	  return null;
 }
 
 function jbw_button(baseObject) {
 
-	baseObject.element = $(document.createElement("input"));
-	baseObject.element.attr("type", "button");
-	baseObject.element.attr("value", baseObject.title);
-	baseObject.element.css("position", "absolute");
-	if(baseObject.top !== null) baseObject.element.css("top", baseObject.top);
-	if(baseObject.left !== null) baseObject.element.css("left", baseObject.left);
-	if(baseObject.bottom !== null) baseObject.element.css("bottom", baseObject.bottom);
-	if(baseObject.right !== null) baseObject.element.css("right", baseObject.right);
-	baseObject.element.on("click", function(){jbw_handleAction[baseObject.action]();});
+		baseObject.head = $(document.createElement("input"));
+		baseObject.head.attr("type", "button");
+		baseObject.head.attr("value", baseObject.title);
+		baseObject.head.css("position", "absolute");
+		if(baseObject.top !== null) baseObject.head.css("top", baseObject.top);
+		if(baseObject.left !== null) baseObject.head.css("left", baseObject.left);
+		if(baseObject.bottom !== null) baseObject.head.css("bottom", baseObject.bottom);
+		if(baseObject.right !== null) baseObject.head.css("right", baseObject.right);
+		baseObject.head.on("click", function(){jbw_handleAction[baseObject.action]();});
+		baseObject.tail = baseObject.head;
 
-	return null;
-
+		return null;
 }
 
-function jbw_textbox(baseObject, afterAttach) {
+function jbw_textbox(baseObject) {
 
-	afterAttach = null;
-	baseObject.element = $(document.createElement("input"));
-	baseObject.element.attr("type", "textbox");
+		baseObject.head = $(document.createElement("input"));
+		baseObject.head.attr("type", "textbox");
+		baseObject.tail = baseObject.head;
 
-	return null;
-
+		return null;
 }
+
+
+function jbw_menuBar(baseObject) {
+
+    baseObject.head = document.createElement("div");
+		$($('.banner')[0]).append(baseObject.head);
+		$(baseObject.head).addClass('jbw_menubar');
+		baseObject.tail = baseObject.head;
+
+		return function() {
+
+		    $(document).on('click', function(e) {
+			      if ( ! $(e.target).closest('.jbw_menu').length && ! $(e.target).closest('.jbw_menuentry_active').length ) {
+				        $('.jbw_menu').hide();
+				        $(".jbw_menuentry_active").addClass("jbw_menuentry");
+				        $(".jbw_menuentry").removeClass("jbw_menuentry_active");
+			      }
+		    });
+		};
+}
+
+
+function jbw_menuHeading(baseObject) {
+
+		var entryDiv;
+
+		//First, we'll create a stub element to insert into
+		//the menu bar in order to open the menu
+    baseObject.head = document.createElement('a');
+		$(baseObject.head).attr("href", "#");
+		entryDiv = document.createElement("div");
+		$(entryDiv).addClass("jbw_menuentry");
+		$(entryDiv).text(baseObject.title);
+		$(baseObject.head).append(entryDiv);
+
+		//Now, we create the menu container which sits in the
+		//document body and contains the menu items
+		baseObject.tail = document.createElement("div");
+		$(baseObject.tail).addClass("jbw_menu");
+
+		//Once the children of this menu are finished installing
+		//we can position the menu container and install events
+		return function(){
+
+				$(document.body).append(baseObject.tail);
+		    $(baseObject.tail).position({
+			      "my": "left top",
+			      "at": "left bottom",
+			      "of": entryDiv
+		    });
+		    $(baseObject.tail).hide();
+		    $(baseObject.tail).addClass("jbw_menu_" + $(entryDiv).text().trim().replace(/ /g,"_"));
+
+		    $(entryDiv).on("click", function(event) {
+
+				    var $targetString = ".jbw_menu_" + $(event.target).text().trim().replace(/ /g,"_");
+			      var $doShow = !$($targetString).is(":visible");
+			      $(".jbw_menu").hide();
+			      $(".jbw_menuentry_active").addClass("jbw_menuentry");
+			      $(".jbw_menuentry").removeClass("jbw_menuentry_active");
+
+				    if($doShow) {
+
+						    $(event.target).closest('div').removeClass("jbw_menuentry");
+				        $(event.target).addClass("jbw_menuentry_active");
+				        $($targetString).show();
+			      }
+        });
+		};
+}
+
+
+function jbw_menuEntry(baseObject) {
+
+		baseObject.head = document.createElement("a");
+		$(baseObject.head).attr("href", "#");
+		baseObject.tail = document.createElement("div");
+		$(baseObject.tail).addClass("jbw_menuitem");
+		$(baseObject.head).append(baseObject.tail);
+		$(baseObject.tail).text(baseObject.title);
+}
+
 
 //Replace with builder-based menu widget
 function jbw_installMenu() {
@@ -227,11 +319,5 @@ function jbw_installMenu() {
 		$(menuVerDiv).css("text-align", "right");
 		$(menuVerDiv).text($jbw_gVersion);
 	});
-	$(document).on('click', function(e) {
-		if ( ! $(e.target).closest('.jbw_menu').length && ! $(e.target).closest('.jbw_menuentry_active').length ) {
-			$('.jbw_menu').hide();
-			$(".jbw_menuentry_active").addClass("jbw_menuentry");
-			$(".jbw_menuentry").removeClass("jbw_menuentry_active");
-		}
-	});
+
 }
