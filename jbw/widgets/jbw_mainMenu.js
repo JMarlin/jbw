@@ -1,5 +1,5 @@
 var jbw_base = require('./jbw_base.js'),
-    foxsql   = require('../../lib/foxsql');
+    pg   = require('../../pg');
 
 
 function jbw_menuHeading(name, title, session) {
@@ -32,7 +32,7 @@ function getMenuData(session, handBack) {
   var menuDefs = { "DataEntry" : "Data Entry",
                    "Reports" : "Reports",
                    "ADP" : "ADP",
-                   "Maintenanc" : "Maintenance" };
+                   "Maintenance" : "Maintenance" };
 
   var ratchetCounter;
   var menuKeys = Object.keys(menuDefs);
@@ -61,27 +61,46 @@ function getMenuData(session, handBack) {
       handBack(returnChildren);
   };
 
-  sql = new foxsql.foxdb();
   ratchetCounter = 0;
-  menuKeys.forEach(function(menuKey) {
 
-    sql.query("SELECT * FROM screenButtons.DBF WHERE Levelname = '" + menuKey + "';", "C:\\Users\\jmarlin\\Documents\\Visual FoxPro Projects\\cwv\\jobbook\\metadata\\", function(e, qres){
+  (function processNextMenu() {
 
-        if(e) {
+      var menuKey = menuKeys[ratchetCounter];
+
+      pg.connect("postgres://jbadmin:pg1pg2!+c0013R@192.168.21.106/jbdev", function(err, client, done){
 
           menuEntries[menuKey] = [];
-          console.log(e);
-        } else {
 
-          menuEntries[menuKey] = qres;
-        }
+          if(err) {
 
-        ratchetCounter++;
+            console.log(e);
+          } else {
 
-        if(ratchetCounter === menuKeys.length)
-            writeMenu();
-    });
-  });
+              var query = client.query("SELECT * FROM screenbuttons WHERE levelname = '" + menuKey + "';");
+
+              query.on('row', function(row) {
+
+                 menuEntries[menuKey].push(row);
+              });
+
+              query.on('error', function(err, client) {
+
+                  console.log(err);
+              });
+
+              query.on('end', function() {
+
+                  ratchetCounter++;
+                  client.end();
+
+                  if(ratchetCounter === menuKeys.length)
+                      writeMenu();
+                  else
+                      processNextMenu();
+              });
+          }
+      });
+  })();
 }
 
 
