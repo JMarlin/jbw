@@ -1,5 +1,5 @@
 var jbw_base = require('./jbw_base.js'),
-    pg   = require('../../pg');
+    pg   = require('pg');
 
 
 function jbw_menuHeading(name, title, session) {
