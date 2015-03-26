@@ -20,12 +20,11 @@ var jbw_handleAction = {
 }
 
 var widget_table = {};
-var rootObject = {};
+var workSpace = {};
+var banner = {};
 var objHandles = [];
 
 function jbw_makeRequest(msgObj) {
-
-
 
 	$.ajax({
 		url:"api",
@@ -48,9 +47,11 @@ function jbw_start() {
     }
   });
 
-	rootObject.tail = $(".jbw_workpane");
-	objHandles[0] = rootObject;
-	jbw_resizeWorkpane();
+	workSpace.tail = $(".jbw_workpane")[0];
+	banner.tail = $(".banner")[0];
+	objHandles[0] = workSpace;
+	objHandles[1] = banner;
+ 	jbw_resizeWorkpane();
 	$(window).resize(jbw_resizeWorkpane);
 
 	//Get the first objects to be loaded from the server
@@ -60,7 +61,6 @@ function jbw_start() {
 function jbw_resizeWorkpane() {
 
 	$(".jbw_workpane").height(window.innerHeight - $(".jbw_workpane").offset().top);
-
 }
 
 /* Below is the collection of functions which make up the class hierarchy
@@ -75,10 +75,10 @@ function jbw_endSession() {
 
 function getObject(handle) {
 
-    //if(objHandles[handle])
-		//    return objHandles[handle];
-		//else
-				return null;
+    if(objHandles[handle])
+		    return objHandles[handle];
+		else
+				return objHandles[1];
 }
 
 function jbw_processMsgs(msgObject) {
@@ -128,7 +128,6 @@ function jbw_widget(JSONObject, parentObj) {
 
 function jbw_panel(baseObject) {
 
-		baseObject.parent = rootObject;
 		baseObject.head = $(document.createElement("div"));
 		baseObject.head.attr("title", baseObject.title);
 		baseObject.head.css("width", baseObject.width);

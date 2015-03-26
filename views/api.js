@@ -72,9 +72,9 @@ function jbw_startSession(requestObj, retArray, returnToQueue) {
 					jbw_loginForm.spawn(null, function(form){
 
 							retArray.push({
-										mode: "builder",
+										mode:    "builder",
 										content: form,
-										parent: 0
+										parent:  0
 							});
 
 							console.log('complete adding login dialog');
@@ -87,9 +87,9 @@ function jbw_startSession(requestObj, retArray, returnToQueue) {
 				jbw_mainMenu.spawn(null, function(menu){
 
 				    retArray.push({
-						    mode: "builder",
+						    mode:    "builder",
 								content: menu,
-								parent: 0
+								parent:  1
 						});
 
 						console.log('complete adding menu');
