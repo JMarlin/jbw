@@ -66,6 +66,7 @@ function getMenuData(session, handBack) {
   (function processNextMenu() {
 
       var menuKey = menuKeys[ratchetCounter];
+      console.log('Getting items in menu "' + menuKey + '"');
 
       pg.connect("postgres://jbadmin:pg1pg2!+c0013R@192.168.21.106/jbdev", function(err, client, done){
 
@@ -80,6 +81,7 @@ function getMenuData(session, handBack) {
 
               query.on('row', function(row) {
 
+                 console.log('Got a row');
                  menuEntries[menuKey].push(row);
               });
 
