@@ -29,9 +29,9 @@ function getMenuData(session, handBack) {
   var tempHeading;
   var itemKeys;
   var sql;
-  var menuDefs = { "DataEntry" : "Data Entry",
-                   "Reports" : "Reports",
-                   "ADP" : "ADP",
+  var menuDefs = { "DataEntry"   : "Data Entry",
+                   "Reports"     : "Reports",
+                   "ADP"         : "ADP",
                    "Maintenance" : "Maintenance" };
 
   var ratchetCounter;
