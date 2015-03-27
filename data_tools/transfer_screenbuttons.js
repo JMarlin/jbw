@@ -1,5 +1,5 @@
 var foxsql      = require('../lib/foxsql'),
-    pg          = require('../pg'),
+    pg          = require('pg'),
     sql         = new foxsql.foxdb(),
     ratchet     = 0,
     preratchet  = 0,
