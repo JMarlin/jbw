@@ -1,0 +1,10 @@
+{
+    "name":         "jobbook-web",
+    "version":      "0.0.1",    
+    "description":  "A reimplimentation of JobBook in modern technologies",
+    "author":       "Joseph Marlin <j.marlin@outlook.com>",
+    "contributors": [{}],
+    "dependencies": {
+        "pg": "4.3.0"
+    }
+}
