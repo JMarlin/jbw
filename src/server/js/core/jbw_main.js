@@ -12,11 +12,11 @@ if(cluster.isMaster) {
 
 	cluster.on('exit', function(worker, code, signal) {
 		// Restart the worker
-		var deadWorker = worker
-		var worker = cluster.fork();
+		var deadWorker = worker;
+		var newWorker = cluster.fork();
 
 		// Note the process IDs
-		var newPID = worker.process.pid;
+		var newPID = newWorker.process.pid;
 		var oldPID = deadWorker.process.pid;
 
 		// Log the event
@@ -49,8 +49,8 @@ if(cluster.isMaster) {
 
 }
 
-process.on('uncaughtException', function (err) {
-  console.error((new Date).toUTCString() + ' uncaughtException:', err.message)
-  console.error(err.stack)
-  process.exit(1)
+process.on('uncaughtException', function(err) {
+  console.error((new Date()).toUTCString() + ' uncaughtException:', err.message);
+  console.error(err.stack);
+  process.exit(1);
 });

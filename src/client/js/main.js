@@ -17,7 +17,7 @@ var jbw_widgetize = { //The objTable is an associative array of all object types
 
 var jbw_handleAction = {
 	"endsession" : jbw_endSession
-}
+};
 
 var widget_table = {};
 var workSpace = {};

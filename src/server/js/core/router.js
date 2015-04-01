@@ -16,7 +16,7 @@ function route(pathname, res, postData) {
 	var rootModule = pathname.split("/")[1];
 
     console.log("About to route a request for \"" + rootModule + "\"");
-	if(rootModule == '' || rootModule == null) {
+	if(rootModule === '' || rootModule === null) {
 		try {
 			handler = require("./views/home");
 		} catch(e) {
@@ -32,7 +32,7 @@ function route(pathname, res, postData) {
 		}	
 	}
 	
-	if(handler != null)	
+	if(handler !== null)	
 		try {
 			handler.display(res, args, postData);
 		} catch(e) {
@@ -47,7 +47,7 @@ function route(pathname, res, postData) {
 			handler = null;
 			final404(res);
 		}
-		if(!(handler == null)){
+		if(handler !== null){
 			try {
 				handler.display(res, args, postData);
 			} catch(e) {

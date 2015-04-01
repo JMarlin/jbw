@@ -15,7 +15,7 @@ exports.jbw_widget = function(name, session) {
   this.destroy = function(){
     jbw_sessionManager[session].closeHandle(this.handle);
     //remove the entity entry from the session list
-  }
+  };
 
 };
 

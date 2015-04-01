@@ -42,7 +42,7 @@ function getMenuData(session, handBack) {
       return function() {
 
       };
-  }
+  };
 
   var writeMenu = function() {
 
@@ -52,7 +52,7 @@ function getMenuData(session, handBack) {
 
           menuEntries[headKey].forEach(function(item){
 
-              tempHeading.children.push(new jbw_menuEntry('', item["prompt"], {}, session));
+              tempHeading.children.push(new jbw_menuEntry('', item.prompt, {}, session));
           });
 
           returnChildren.push(tempHeading);

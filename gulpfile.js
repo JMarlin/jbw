@@ -1,10 +1,10 @@
 var gulp   = require('gulp'),
-    gutil  = require('gulp-util'),
     jshint = require('gulp-jshint'),
     uglify = require('gulp-uglify'),
     less   = require('gulp-less'),
     rename = require('gulp-rename'),
     mincss = require('gulp-minify-css'),
+    concat = require('gulp-concat'),
     paths = {
         clientjs: ['./src/client/js/*.js'],
 	less:     ['./src/client/style/*.less'],
@@ -17,8 +17,8 @@ gulp.task('less', function() {
 
     gulp.src(paths.less)
         .pipe(less())
-	.pipe(concat('jbw_css.css')),
-	//should minify as well
+	.pipe(concat('jbw_css.css'))
+	.pipe(mincss('jbw_css.css'))
 	.pipe(gulp.dest('./deploy/res'));
 });
 
@@ -51,9 +51,9 @@ gulp.task('server', ['server-js']);
 // Global build tasks
 gulp.task('lint', function() {
 
-    gulp.src([].concat(clientjs, serverjs))
+    gulp.src([].concat(paths.clientjs, paths.serverjs))
         .pipe(jshint())
-	.pipe(jshint().reporter('default'));
+	.pipe(jshint.reporter('default'));
 });
 
 
