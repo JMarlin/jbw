@@ -1,56 +1,58 @@
-var cluster = require('cluster');
-var http = require('http');
-var url = require('url');
-var router = require('./router.js');
+//This code is in global scope and is therefore essentially
+//the entry point for our application
 
-var cpuCount = require('os').cpus().length;
+var router   = new router(),
+cpuCount = require('os').cpus().length;
 
+//cluster is a global lib
 if(cluster.isMaster) {
 
-	for(var i = 0; i < cpuCount; i++)
-		cluster.fork();
+   for(i = 0; i < cpuCount; i++)
+	   cluster.fork();
 
-	cluster.on('exit', function(worker, code, signal) {
-		// Restart the worker
-		var deadWorker = worker;
-		var newWorker = cluster.fork();
+   cluster.on('exit', function(worker, code, signal) {
+	   // Restart the worker
+	   var deadWorker = worker;
+	   var newWorker = cluster.fork();
 
-		// Note the process IDs
-		var newPID = newWorker.process.pid;
-		var oldPID = deadWorker.process.pid;
+	   // Note the process IDs
+	   var newPID = newWorker.process.pid;
+	   var oldPID = deadWorker.process.pid;
 
-		// Log the event
-		console.log('worker '+oldPID+' died.');
-		console.log('worker '+newPID+' born.');
-	});
-
+	   // Log the event
+	   console.log('worker '+oldPID+' died.');
+	   console.log('worker '+newPID+' born.');
+   });
 } else {
 
-	http.createServer(function(req, res) {
+     //http is a global lib
+     http.createServer(function(req, res) {
 
-      var postData = "";
-	  var pathname = url.parse(req.url).pathname;
+     var postData = "",
+         pathname = url.parse(req.url).pathname;
 
-	  console.log('Request for "' + pathname + '" received.');
+     console.log('Request for "' + pathname + '" received.');
 
-	  req.setEncoding("utf8");
+     req.setEncoding("utf8");
 
-	  req.addListener("data", function(postDataChunk) {
-		postData += postDataChunk;
-		console.log("Received POST data '" + postDataChunk + "'");
-	  });
+     req.addListener("data", function(postDataChunk) {
+	   postData += postDataChunk;
+	   console.log("Received POST data '" + postDataChunk + "'");
+     });
 
-	  req.addListener("end", function() {
-		router.route(pathname, res, postData);
-	  });
+     req.addListener("end", function() {
+	   router.route(pathname, res, postData);
+     });
 
-	}).listen(8888);
-	console.log('Server has started.');
+   }).listen(8888);
+   console.log('Server has started.');
 
 }
 
 process.on('uncaughtException', function(err) {
-  console.error((new Date()).toUTCString() + ' uncaughtException:', err.message);
-  console.error(err.stack);
-  process.exit(1);
+console.error((new Date()).toUTCString() + ' uncaughtException:', err.message);
+console.error(err.stack);
+process.exit(1);
 });
+
+
