@@ -9,10 +9,6 @@ function JBWRectWidget(height, width, top, left, bottom, right, session, done) {
 	base.left   = left;
 	base.bottom = bottom;
 	base.right  = right;
-
-	process.nextTick(function() {
-
-	    done(base);
-	}, 0);
+        done(base);
     });
-};
+}

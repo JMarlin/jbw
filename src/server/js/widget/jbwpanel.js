@@ -4,10 +4,6 @@ function JBWPanel(height, width, top, left, bottom, right, resizable, session, d
     
         base.type      = 'panel';
         base.resizable = resizable;
-        
-        process.nextTick(function() {
-
-	    done(base);
-	}, 0);
+        done(base);
     });
-};
+}

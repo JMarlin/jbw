@@ -45,7 +45,17 @@ gulp.task('server-js', function() {
 });
 
 
+gulp.task('server-js-debug', function() {
+
+    gulp.src(paths.serverjs)
+        .pipe(concat('jbw_server_debug.js'))
+	.pipe(gulp.dest('./deploy'));
+});
+
+
 gulp.task('server', ['server-js']);
+
+gulp.task('server-debug', ['server-js-debug']);
 
 
 // Global build tasks
@@ -56,5 +66,6 @@ gulp.task('lint', function() {
 	.pipe(jshint.reporter('default'));
 });
 
+gulp.task('debug', ['lint', 'server-debug', 'client']);
 
 gulp.task('default', ['lint', 'server', 'client']);

@@ -1,8 +1,9 @@
 //This code is in global scope and is therefore essentially
 //the entry point for our application
+new Libs(); //This just causes the global libs to be loaded
 
 var router   = new Router(),
-cpuCount = require('os').cpus().length;
+cpuCount     = require('os').cpus().length;
 
 //cluster is a global lib
 if(cluster.isMaster) {

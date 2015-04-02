@@ -1,12 +1,8 @@
 function JBWForm(session, done) {
 
-    JBWWidget(session, function() {
+    JBWWidget(session, function(base) {
     
         base.type = 'form';
-	
-        process.nextTick(function() {
-
-	    done(base);
-	}, 0);
+	done(base);
     });
-};
+}

@@ -6,10 +6,6 @@ function JBWTextbox(height, width, top, left, bottom, right, content, session, d
     JBWRectWidget(height, width, top, left, bottom, right, session, function(base) {
     
         base.type = 'textbox';
-        
-	process.nextTick(function() {
-
-	    done(base);
-	}, 0);
+        done(base);
     });
-};
+}

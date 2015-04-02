@@ -5,10 +5,6 @@ function JBWButton(title, action, height, width, top, left, bottom, right, sessi
         base.type   = 'button';
         base.title  = title;
         base.action = action;
-        
-	process.nextTick(function() {
-
-	    done(base);
-	}, 0);
+        done(base);
     });
-};
+}
