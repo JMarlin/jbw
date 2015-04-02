@@ -1,5 +1,5 @@
 
-function router() {
+function Router() {
 
     var that = this;
     
@@ -31,57 +31,45 @@ function router() {
 	//exists
 	if(rootModule === '' || rootModule === null) {
 	
-            try {
-		
-                handler = require("./views/home");
-            } catch(e) {
+            if(!(handler = views.home)) {
 			 
                 pageFound = false;
                 console.log("Home module not defined");
             }	
 	} else {
             
-	    try {
-	   
-                handler = require("./views/" + rootModule);
-            } catch(e) {
-        
+	    if(!(handler = views[rootModule])) {
+	           
 	        pageFound = false;
 		console.log("Could not find a module for " + rootModule);
             }	
 	}
 
-	if(handler !== null)	
-            try {
+	if(handler && handler.display) {
 		
-                handler.display(res, args, postData);
-            } catch(e) {
+            handler.display(res, args, postData);
+        } else {
 		
-                pageFound = false;
-                console.log("Module " + rootModule + " does not have a display method!\n error: " + e);
-	    }
+            pageFound = false;
+            console.log("Module " + rootModule + " does not have a display method!\n error: " + e);
+	}
 
         if(!pageFound) {
 
-            try {
-		
-                handler = require('./views/404');
-            } catch(e) {
-	        
+            if(!(handler = views['404'])) {
+			        
 		handler = null;
 		final404(res);
             }
 		    
-            if(handler !== null){
+            if(handler && handler.display){
 		
-		try {
-		    
-		    handler.display(res, args, postData);
-		} catch(e) {
+                handler.display(res, args, postData);
+	    } else {
 		
 		    final404(res);
-	        }
 	    }
+	    
 	}
 
     }

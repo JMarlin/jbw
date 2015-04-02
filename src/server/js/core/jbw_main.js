@@ -1,7 +1,7 @@
 //This code is in global scope and is therefore essentially
 //the entry point for our application
 
-var router   = new router(),
+var router   = new Router(),
 cpuCount = require('os').cpus().length;
 
 //cluster is a global lib

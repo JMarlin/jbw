@@ -1,7 +1,3 @@
-var jbw_base = require('./jbw_base.js'),
-    pg   = require('pg');
-
-
 function jbw_menuHeading(name, title, session) {
 
     var base = new jbw_base.jbw_widget(name, session);
